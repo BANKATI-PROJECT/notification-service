@@ -11,7 +11,7 @@ public class NotificationService {
     @Autowired
     private EmailService emailService;
 
-    @KafkaListener(topics = "${topic.notification}", groupId = "notification-group")
+    @KafkaListener(topics = "${topic.credential}", groupId = "notification-group")
     public void consume(String event) {
         try {
             // Convertir l'événement JSON en objet

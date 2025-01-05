@@ -20,8 +20,6 @@ public class NotificationService {
             String email = eventNode.get("email").asText();
             String username = eventNode.get("username").asText();
             String password = eventNode.get("password").asText();
-
-
             String message = String.format(
                     "Bonjour !\n\nVotre compte a été créé avec succès. Voici vos identifiants de connexion :\n\n" +
                             "Username : %s\nMot de passe : %s\n\nMerci de garder ces informations en sécurité.",
@@ -36,14 +34,28 @@ public class NotificationService {
     @KafkaListener(topics = "${topic.transaction}", groupId = "notification-group")
     public void consumeTransactionTranser(String event) {
         try {
-            // Convertir l'événement JSON en objet
+
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode eventNode = objectMapper.readTree(event);
             String clientId = eventNode.get("clientId").asText();
             String email = eventNode.get("email").asText();
             String message = eventNode.get("message").asText();
 
-            // Envoyer l'email
+            emailService.sendEmail(email, "Mise à jour de votre portefeuille", message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @KafkaListener(topics = "${topic.transaction.deposit}", groupId = "notification-group")
+    public void consumeTransactionDeposit(String event) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode eventNode = objectMapper.readTree(event);
+            String clientId = eventNode.get("clientId").asText();
+            String email = eventNode.get("email").asText();
+            String message = eventNode.get("message").asText();
+
             emailService.sendEmail(email, "Mise à jour de votre portefeuille", message);
         } catch (Exception e) {
             e.printStackTrace();
